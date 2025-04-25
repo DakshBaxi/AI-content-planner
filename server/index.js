@@ -11,7 +11,7 @@ const app = express();
 // Parse application/json
 app.use(express.json());
 
-
+const port = process.env.PORT || 5000
 
 app.use(cors({
     origin:"*"
@@ -23,8 +23,8 @@ app.get('/',(req,res)=>{
 
 app.use('/api/plan-route',contentRoute)
 
-app.listen(5000,(req,res)=>{
+app.listen(port,(req,res)=>{
     console.log(
-        "Server is running on 5000"
+        `Server is running on ${port}`
     )
 })
