@@ -1,7 +1,7 @@
 
 import express from "express"
 import cors from "cors"
-
+import serverless from "serverless-http"; // 👈 NEW
 import contentRoute from "./routes/contentRoute.js"
 import dotenv from 'dotenv';
 dotenv.config();
@@ -18,13 +18,19 @@ app.use(cors({
 }))
 
 app.get('/',(req,res)=>{
-    res.send("Hello");
+    res.json("Hello");
 })
 
 app.use('/api/plan-route',contentRoute)
 
-app.listen(port,(req,res)=>{
-    console.log(
-        `Server is running on ${port}`
-    )
-})
+// Only listen locally if not running on Vercel
+if (process.env.NODE_ENV !== "production") {
+    const port = process.env.PORT || 5000;
+    app.listen(port, () => {
+      console.log(`Server running locally on http://localhost:${port}`);
+    });
+  }
+  
+  // For Vercel serverless
+  export const handler = serverless(app);
+  
