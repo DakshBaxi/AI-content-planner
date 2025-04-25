@@ -76,7 +76,7 @@
 import type { Plan, PlanSummary, Post } from "@/types/plan"
 import { auth } from "@clerk/nextjs/server"
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/plan-route"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
 async function getAuthHeaders() {
   const { getToken } = await auth()
@@ -100,14 +100,14 @@ async function handleResponse(response: Response) {
 // ✅ Fetch all plans for current user
 export async function fetchPlans(): Promise<PlanSummary[]> {
   const headers = await getAuthHeaders()
-  const response = await fetch(`${API_BASE_URL}/myplans`, { headers })
+  const response = await fetch(`${API_BASE_URL}/api/plan-route/myplans`, { headers })
   return handleResponse(response)
 }
 
 // ✅ Create a new plan (POST /generate-plan)
 export async function createPlan(planData: Omit<Plan, "id" | "posts">): Promise<Plan> {
   const headers = await getAuthHeaders()
-  const response = await fetch(`${API_BASE_URL}/generate-plan`, {
+  const response = await fetch(`${API_BASE_URL}/api/plan-route/generate-plan`, {
     method: "POST",
     headers,
     body: JSON.stringify(planData),
@@ -118,7 +118,7 @@ export async function createPlan(planData: Omit<Plan, "id" | "posts">): Promise<
 // geting unique plan 
 export async function getUniquePlan(planId: string): Promise<Plan> {
   const headers = await getAuthHeaders()
-  const response = await fetch(`${API_BASE_URL}/my-plan/${planId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/plan-route/my-plan/${planId}`, {
     method: "GET",
     headers,
   })
@@ -130,7 +130,7 @@ export async function getUniquePlan(planId: string): Promise<Plan> {
 // ✅ Edit existing plan (POST /edit-plan)
 export async function editPlan(planId: string, instructions: string): Promise<Plan> {
   const headers = await getAuthHeaders()
-  const response = await fetch(`${API_BASE_URL}/edit-plan`, {
+  const response = await fetch(`${API_BASE_URL}/api/plan-route/edit-plan`, {
     method: "POST",
     headers,
     body: JSON.stringify({ planId, instructions }),
@@ -141,7 +141,7 @@ export async function editPlan(planId: string, instructions: string): Promise<Pl
 // ✅ Delete a plan (DELETE /delete-plan/:planId)
 export async function deletePlan(planId: string): Promise<void> {
   const headers = await getAuthHeaders()
-  const response = await fetch(`${API_BASE_URL}/delete-plan/${planId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/plan-route/delete-plan/${planId}`, {
     method: "DELETE",
     headers,
   })
@@ -154,7 +154,7 @@ export async function deletePlan(planId: string): Promise<void> {
 // ✅ Delete a post (DELETE /delete-post/:postId)
 export async function deletePost(postId: string): Promise<void> {
   const headers = await getAuthHeaders()
-  const response = await fetch(`${API_BASE_URL}/delete-post/${postId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/plan-route/delete-post/${postId}`, {
     method: "DELETE",
     headers,
   })
@@ -172,7 +172,7 @@ export async function editPost(postId: string, update: {
   date: Date
 }): Promise<any> {
   const headers = await getAuthHeaders()
-  const response = await fetch(`${API_BASE_URL}/edit-post/${postId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/plan-route/edit-post/${postId}`, {
     method: "PUT",
     headers,
     body: JSON.stringify(update),
@@ -191,7 +191,7 @@ export async function fetchUserUsage(): Promise<{ count: number; limit: number }
   // Mock data for demonstration
 
   const headers = await getAuthHeaders()
-  const response = await fetch(`${API_BASE_URL}/user/usage`, {
+  const response = await fetch(`${API_BASE_URL}/api/plan-route/user/usage`, {
     method: "GET",
     headers,
   })
@@ -208,7 +208,7 @@ export async function fetchUserUsage(): Promise<{ count: number; limit: number }
 // /lib/api.ts
 export async function createPost(planId: string, postData: { title: string; description: string; type: string; date: Date }) {
   const headers = await getAuthHeaders()
-  const res = await fetch(`${API_BASE_URL}/create-custom-post/${planId}`, {
+  const res = await fetch(`${API_BASE_URL}/api/plan-route/create-custom-post/${planId}`, {
     method: "POST",
     headers,
     body: JSON.stringify(postData),
