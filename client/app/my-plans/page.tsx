@@ -108,7 +108,7 @@ export default function MyPlansPage() {
                       <Badge variant="secondary">{plan.frequency} posts/week</Badge>
                     </div>
                     <div className="mb-4">
-                      <h3 className="font-medium text-lg mb-1 line-clamp-1">{plan.name || "Content Plan"}</h3>
+                      <h3 className="font-medium text-lg mb-1 line-clamp-1">{plan.contentPillars[0] || "Content Plan"}</h3>
                       <p className="text-sm text-muted-foreground mb-2">Created: {formatDate(plan.createdAt)}</p>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {plan.contentPillars.slice(0, 3).map((pillar) => (

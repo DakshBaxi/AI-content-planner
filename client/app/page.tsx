@@ -1,9 +1,10 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Calendar, Clock, Lightbulb, Target } from "lucide-react"
+import { ArrowRight, Calendar, Clock, CreditCard, Lightbulb, Target } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
+import PricingPage from "./pricing/page"
 
 export default function Home() {
   const scrollToFeatures = () => {
@@ -59,7 +60,7 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2 lg:grid-cols-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -121,11 +122,12 @@ export default function Home() {
               </p>
             </motion.div>
           </div>
-          <div className="flex justify-center">
+          <div className="flex justify-center items-center gap-4 pt-4">
             <Button asChild size="lg">
               <Link href="/planner">Start Planning Now</Link>
             </Button>
           </div>
+          <PricingPage/>
         </div>
       </section>
     </div>

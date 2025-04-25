@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { useAuth } from "@clerk/nextjs"
@@ -8,13 +8,35 @@ import PlannerForm from "@/components/planner/planner-form"
 import ContentCalendar from "@/components/planner/content-calendar"
 import type { Plan } from "@/types/plan"
 import LoadingState from "@/components/planner/loading-state"
-import { createPlan } from "@/lib/api"
+import { createPlan, editPlan, fetchUserUsage } from "@/lib/api"
+import { toast } from "@/components/ui/use-toast"
+
 
 export default function PlannerPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [plan, setPlan] = useState<Plan | null>(null)
   const router = useRouter()
+  const [usage, setUsage] = useState<{ count: number; limit: number } | null>(null)
+  const [usageLoading, setUsageLoading] = useState(true)
   const { isSignedIn } = useAuth()
+
+  useEffect(() => {
+    if (isSignedIn) {
+      loadUsage()
+    }
+  }, [isSignedIn])
+
+  const loadUsage = async () => {
+    try {
+      setUsageLoading(true)
+      const data = await fetchUserUsage()
+      setUsage(data)
+    } catch (error) {
+      console.error("Failed to load usage data:", error)
+    } finally {
+      setUsageLoading(false)
+    }
+  }
 
   const handleSubmit = async (formData: any) => {
     setIsLoading(true)
@@ -25,6 +47,18 @@ export default function PlannerPage() {
         router.push("/sign-in")
         return
       }
+      
+
+         // Check usage limits
+    if (usage && usage.count >= usage.limit) {
+      toast({
+        title: "Generation limit reached",
+        description: "You've reached your plan's generation limit. Please upgrade to continue.",
+        variant: "destructive",
+      })
+      router.push("/pricing")
+      return
+    }
 
       // In a real app, this would be an actual API call
       // const response = await createPlan(formData)
@@ -35,24 +69,13 @@ export default function PlannerPage() {
       // Simulate API call with timeout
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
-      // Mock response data
-      // const mockPlan: Plan = {
-      //   id: "plan-" + Date.now(),
-      //   platform: formData.platform,
-      //   contentPillars: formData.contentPillars,
-      //   frequency: formData.frequency,
-      //   tone: formData.tone,
-      //   goal: formData.goal,
-      //   posts: Array.from({ length: formData.frequency * 4 }, (_, i) => ({
-      //     id: `post-${i}`,
-      //     date: new Date(Date.now() + i * 24 * 60 * 60 * 1000),
-      //     title: `${formData.contentPillars[i % formData.contentPillars.length]} post ${i + 1}`,
-      //     description: `This is a ${formData.tone} post about ${formData.contentPillars[i % formData.contentPillars.length]} for ${formData.platform}.`,
-      //     type: ["text", "image", "video"][Math.floor(Math.random() * 3)],
-      //   })),
-      // }
-
       setPlan(newPlan)
+      if (usage) {
+        setUsage({
+          ...usage,
+          count: usage.count + 1,
+        })
+      }
     } catch (error) {
       console.error("Error generating plan:", error)
       // Handle error state
@@ -74,29 +97,14 @@ export default function PlannerPage() {
       }
 
       // In a real app, this would be an actual API call
-      // const response = await editPlan(planId, instructions)
-      // setPlan(response)
+      const response = await editPlan(planId, instructions)
+      setPlan(response)
 
       // Simulate API call with timeout
       await new Promise((resolve) => setTimeout(resolve, 1500))
 
       // Update the existing plan with some modifications based on instructions
-      if (plan) {
-        const updatedPlan = {
-          ...plan,
-          posts: plan.posts.map((post) => ({
-            ...post,
-            title: instructions.includes("shorter")
-              ? post.title.substring(0, post.title.length / 2) + "..."
-              : post.title + " (updated)",
-            description: instructions.includes("detailed")
-              ? post.description + " Now with more details based on audience research."
-              : post.description + " (updated)",
-          })),
-        }
-
-        setPlan(updatedPlan)
-      }
+   
     } catch (error) {
       console.error("Error editing plan:", error)
       // Handle error state
@@ -104,6 +112,8 @@ export default function PlannerPage() {
       setIsLoading(false)
     }
   }
+
+  
 
   return (
     <div className="container py-8 md:py-12">

@@ -6,13 +6,14 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { ClerkProvider } from "@clerk/nextjs"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
+import { Toaster } from "@/components/ui/toaster"
+
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "ContentAI - AI-Powered Content Planner",
-  description: "Generate and schedule your content strategy with AI, tailored to your audience.",
-    generator: 'v0.dev'
+  description: "Generate and schedule your content strategy with AI, tailored to your audience."
 }
 
 export default function RootLayout({
@@ -30,6 +31,7 @@ export default function RootLayout({
               <main className="flex-1">{children}</main>
               <Footer />
             </div>
+            <Toaster/>
           </ThemeProvider>
         </body>
       </html>

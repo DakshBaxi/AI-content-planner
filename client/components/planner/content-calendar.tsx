@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, Edit, ArrowLeft } from "lucide-react"
 import EditPlanModal from "@/components/planner/edit-plan-modal"
 import PostCard from "@/components/planner/post-card"
+import CreatePostModal from "./create-post-model"
 
 type ContentCalendarProps = {
   plan: Plan
@@ -17,7 +18,8 @@ type ContentCalendarProps = {
 
 export default function ContentCalendar({ plan, onEditPlan }: ContentCalendarProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  console.log(plan)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  // console.log(plan)
   // Group posts by week
   const postsByWeek: { [key: string]: typeof plan.posts } = {}
 
@@ -39,6 +41,8 @@ export default function ContentCalendar({ plan, onEditPlan }: ContentCalendarPro
     onEditPlan(plan.id, instructions)
     setIsEditModalOpen(false)
   }
+
+ 
 
   return (
     <div className="space-y-6">
@@ -78,9 +82,12 @@ export default function ContentCalendar({ plan, onEditPlan }: ContentCalendarPro
                 {/* <Button variant="outline" onClick={() => window.location.reload()} className="gap-1">
                   <ArrowLeft className="h-4 w-4" /> New Plan
                 </Button> */}
-                <Button onClick={() => setIsEditModalOpen(true)} className="gap-1">
+                {/* <Button onClick={() => setIsEditModalOpen(true)} className="gap-1">
                   <Edit className="h-4 w-4" /> Edit Plan
-                </Button>
+                </Button> */}
+                <Button onClick={() => setIsCreateModalOpen(true)} className="gap-1">
+  <Edit className="h-4 w-4" /> Create Post
+</Button>
               </div>
             </div>
           </CardContent>
@@ -126,6 +133,15 @@ export default function ContentCalendar({ plan, onEditPlan }: ContentCalendarPro
       </div>
 
       <EditPlanModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} onSubmit={handleEditPlan} />
+      <CreatePostModal
+  isOpen={isCreateModalOpen}
+  onClose={() => setIsCreateModalOpen(false)}
+  onSubmit={() => {
+    setIsCreateModalOpen(false)
+    window.location.reload()
+  }}
+  planId={plan.id}
+/>
     </div>
   )
 }

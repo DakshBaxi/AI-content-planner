@@ -73,7 +73,7 @@
 // }
 
 "use server"
-import type { Plan, PlanSummary } from "@/types/plan"
+import type { Plan, PlanSummary, Post } from "@/types/plan"
 import { auth } from "@clerk/nextjs/server"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/plan-route"
@@ -124,6 +124,8 @@ export async function getUniquePlan(planId: string): Promise<Plan> {
   })
   return handleResponse(response)
 }
+
+
 
 // ✅ Edit existing plan (POST /edit-plan)
 export async function editPlan(planId: string, instructions: string): Promise<Plan> {
@@ -177,3 +179,45 @@ export async function editPost(postId: string, update: {
   })
   return handleResponse(response)
 }
+
+export async function fetchUserUsage(): Promise<{ count: number; limit: number }> {
+  // For demo purposes, return mock data
+  // In a real app, you would make an actual API call:
+  // const response = await fetch(`${API_BASE_URL}/user/usage`, {
+  //   headers: getAuthHeaders(),
+  // })
+  // return handleResponse(response)
+
+  // Mock data for demonstration
+
+  const headers = await getAuthHeaders()
+  const response = await fetch(`${API_BASE_URL}/user/usage`, {
+    method: "GET",
+    headers,
+  })
+  return handleResponse(response)
+
+  // await new Promise((resolve) => setTimeout(resolve, 500))
+
+  // return {
+  //   count: 3,
+  //   limit: 5,
+  // }
+}
+
+// /lib/api.ts
+export async function createPost(planId: string, postData: { title: string; description: string; type: string; date: Date }) {
+  const headers = await getAuthHeaders()
+  const res = await fetch(`${API_BASE_URL}/create-custom-post/${planId}`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(postData),
+  })
+
+  if (!res.ok) {
+    throw new Error("Failed to create post")
+  }
+
+  return await res.json()
+}
+

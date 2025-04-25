@@ -33,8 +33,19 @@ const formSchema = z.object({
   }),
   endDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
     message: "Please select a valid end date",
-  }),
-})
+  })
+}).refine(
+  (data) => {
+    const start = new Date(data.startDate)
+    const end = new Date(data.endDate)
+    const diffInDays = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+    return diffInDays >= 0 && diffInDays <= 60
+  },
+  {
+    message: "End date must be within 60 days after the start date.",
+    path: ["endDate"],
+  }
+)
 
 type PlannerFormProps = {
   onSubmit: (values: z.infer<typeof formSchema>) => void

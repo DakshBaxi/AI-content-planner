@@ -19,7 +19,27 @@ model User {
   clerkId   String   @unique
   plans     Plan[]
   createdAt DateTime @default(now())
+  stripeCustomerId String?
+  subscriptionPlan Subscription? 
+  generationCount  Int     @default(0)
+  generationLimit  Int     @default(10)
+  lastReset        DateTime @default(now())
 }
+
+model Subscription {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+  plan          SubsriptionType @default(free)    // "free" | "pro" | "enterprise"
+  status        String   // "active", "canceled", "expired"
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  stripeSubscriptionId String? // optional if using Stripe
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+
 
 model Plan {
   id             String   @id @default(uuid())
@@ -43,4 +63,10 @@ model Post {
   type        String
   planId      String
   plan        Plan     @relation(fields: [planId], references: [id],onDelete: Cascade)
+}
+
+enum SubsriptionType {
+  free
+  pro
+  enterprise
 }

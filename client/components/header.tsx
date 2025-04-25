@@ -1,3 +1,5 @@
+
+
 "use client"
 
 import Link from "next/link"
@@ -5,10 +7,11 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { Calendar, Home, FileText, Menu, X, LayoutDashboard, User } from "lucide-react"
+import { Calendar, Home, FileText, Menu, X, LayoutDashboard, User, CreditCard } from "lucide-react"
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { UserButton, SignedIn, SignedOut } from "@clerk/nextjs"
+import UsageProgress from "@/components/usage-progress"
 
 const navItems = [
   {
@@ -17,20 +20,20 @@ const navItems = [
     icon: Home,
   },
   {
-    name: "Planner",
-    href: "/planner",
-    icon: Calendar,
-  },
-  {
     name: "My Plans",
     href: "/my-plans",
     icon: LayoutDashboard,
   },
   {
-    name: "Docs",
-    href: "/docs",
-    icon: FileText,
+    name: "Pricing",
+    href: "/pricing",
+    icon: CreditCard,
   },
+  // {
+  //   name: "Docs",
+  //   href: "/docs",
+  //   icon: FileText,
+  // },
 ]
 
 export default function Header() {
@@ -64,7 +67,11 @@ export default function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
+          <SignedIn>
+            <UsageProgress />
+          </SignedIn>
+
           <ThemeToggle />
 
           <SignedIn>
@@ -112,6 +119,11 @@ export default function Header() {
                   {item.name}
                 </Link>
               ))}
+              <SignedIn>
+                <div className="flex items-center gap-2 p-2 border-t pt-4">
+                  <UsageProgress />
+                </div>
+              </SignedIn>
               <div className="flex flex-col gap-2 pt-2 border-t">
                 <SignedIn>
                   <div className="flex items-center gap-2 p-2">
@@ -139,3 +151,4 @@ export default function Header() {
     </header>
   )
 }
+
