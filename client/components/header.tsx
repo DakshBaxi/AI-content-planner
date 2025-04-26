@@ -46,7 +46,7 @@ export default function Header() {
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2">
             <Calendar className="h-6 w-6" />
-            <span className="hidden font-bold sm:inline-block">ContentAI</span>
+            <span className=" font-bold inline-block">PlayPlan</span>
           </Link>
         </div>
 
