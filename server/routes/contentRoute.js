@@ -283,4 +283,29 @@ router.get("/user/usage", authMiddleware,async (req, res) => {
 })
 
 
+router.post('/submitEnterpriseForm', async (req, res) => {
+  const user = await getOrCreateUser(req.clerkId);
+  const userId = user.id;
+  const formdata = req.body;
+
+  try {
+    const enterprise = await prisma.enterprise.create({
+      data: {
+        name: formdata.name,
+        email: formdata.email,
+        message: formdata.message,
+        user: {
+          connect: { id: userId },  // 👈 connect the user properly
+        },
+      },
+    });
+
+    res.json({ success: true, enterprise });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+});
+
+
 export  default router
