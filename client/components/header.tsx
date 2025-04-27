@@ -69,7 +69,9 @@ export default function Header() {
 
         <div className="flex items-center gap-4">
           <SignedIn>
-            <UsageProgress />
+         <div className="hidden md:flex">
+         <UsageProgress  />
+         </div>
           </SignedIn>
 
           <ThemeToggle />

@@ -8,10 +8,10 @@ export default function Footer() {
         <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
           <Link href="/" className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            <span className="font-bold">ContentAI</span>
+            <span className="font-bold">PlayPlan</span>
           </Link>
           <p className="text-center text-sm text-muted-foreground md:text-left">
-            &copy; {new Date().getFullYear()} ContentAI. All rights reserved.
+            &copy; {new Date().getFullYear()} PlayPlan. All rights reserved.
           </p>
         </div>
         <div className="flex gap-4">

@@ -41,10 +41,10 @@ export default function UsageProgress() {
   }
 
   return (
-    <TooltipProvider>
+    <TooltipProvider >
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="flex items-center gap-2 min-w-[140px]">
+          <div className=" flex items-center gap-2 min-w-[140px]">
             <Zap className="h-4 w-4 text-primary" />
             <div className="w-full">
               <div className="flex justify-between text-xs mb-1">

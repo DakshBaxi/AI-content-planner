@@ -20,6 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import { submitEnterpriseForm } from "@/lib/api"
 
 const plans = [
   {
@@ -73,7 +74,6 @@ export default function PricingPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    company: "",
     message: "",
   })
   const router = useRouter()
@@ -96,18 +96,20 @@ export default function PricingPage() {
     }
   }
 
-  const handleEnterpriseSubmit = (e: React.FormEvent) => {
+  const handleEnterpriseSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     // In a real app, send this data to your backend
+
+    const res = await submitEnterpriseForm(formData)
     alert("Thank you for your interest! Our team will contact you soon.")
     setShowEnterpriseDialog(false)
     setFormData({
       name: "",
       email: "",
-      company: "",
       message: "",
     })
   }
+  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -207,10 +209,6 @@ export default function PricingPage() {
                     onChange={handleInputChange}
                     required
                   />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="company">Company</Label>
-                  <Input id="company" name="company" value={formData.company} onChange={handleInputChange} required />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="message">Message</Label>

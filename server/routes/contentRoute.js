@@ -283,7 +283,7 @@ router.get("/user/usage", authMiddleware,async (req, res) => {
 })
 
 
-router.post('/submitEnterpriseForm', async (req, res) => {
+router.post('/submitEnterpriseForm',authMiddleware, async (req, res) => {
   const user = await getOrCreateUser(req.clerkId);
   const userId = user.id;
   const formdata = req.body;
