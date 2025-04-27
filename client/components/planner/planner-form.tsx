@@ -120,7 +120,6 @@ export default function PlannerForm({ onSubmit }: PlannerFormProps) {
                     <SelectItem value="twitter">X (Twitter)</SelectItem>
                     <SelectItem value="instagram">Instagram</SelectItem>
                     <SelectItem value="facebook">Facebook</SelectItem>
-                    <SelectItem value="tiktok">TikTok</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormDescription>Choose the platform where you want to publish your content.</FormDescription>
