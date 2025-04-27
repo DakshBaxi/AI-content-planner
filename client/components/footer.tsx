@@ -11,7 +11,7 @@ export default function Footer() {
             <span className="font-bold">PlayPlan</span>
           </Link>
           <p className="text-center text-sm text-muted-foreground md:text-left">
-            &copy; {new Date().getFullYear()} PlayPlan. All rights reserved.
+            &copy; {new Date().getFullYear()} PlayPlan All rights reserved.
           </p>
         </div>
         <div className="flex gap-4">
