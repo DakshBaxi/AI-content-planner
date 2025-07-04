@@ -15,29 +15,34 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  clerkId   String   @unique
-  plans     Plan[]
-  createdAt DateTime @default(now())
-  stripeCustomerId String?
-  subscriptionPlan Subscription? 
-  generationCount  Int     @default(0)
-  generationLimit  Int     @default(5)
+  id               String   @id @default(uuid())
+  clerkId          String   @unique
+  plans            Plan[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  // Generation/Token Management
+  generationCount  Int      @default(0)
+  generationLimit  Int      @default(5)
   lastReset        DateTime @default(now())
-  enterprise  Enterprise? 
+  
+  // Subscription Management
+  subscriptionId   String?  // Clerk subscription ID
+  subscriptionPlan String   @default("free") // "free", "pro", "premium"
+  subscriptionStatus String @default("active") // "active", "canceled", "expired", "past_due"
+  isSubscribed     Boolean  @default(false)
+  
+  // Billing Information (optional)
+  customerId       String?  // Stripe customer ID (if using Stripe)
+  billingCycle     String?  // "monthly", "yearly"
+  nextBillingDate  DateTime?
+  
+  // Relations
+  enterprise       Enterprise?
+  
 }
 
-model Subscription {
-  id            String   @id @default(cuid())
-  userId        String   @unique
-  user          User     @relation(fields: [userId], references: [id])
-  plan          SubsriptionType @default(free)    // "free" | "pro" | "enterprise"
-  status        String   // "active", "canceled", "expired"
-  currentPeriodStart DateTime
-  currentPeriodEnd   DateTime
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
+
 
 model Enterprise {
   id        String   @id @default(cuid())
@@ -75,8 +80,8 @@ model Post {
   plan        Plan     @relation(fields: [planId], references: [id],onDelete: Cascade)
 }
 
-enum SubsriptionType {
-  free
-  pro
-  enterprise
-}
+// enum SubsriptionType {
+//   free
+//   pro
+//   enterprise
+// }

@@ -1,8 +1,10 @@
 
 import express from "express"
 import cors from "cors"
-import contentRoute from "./routes/contentRoute.js"
 import dotenv from 'dotenv';
+import contentRoute from "./routes/contentRoute.js"
+import instagramRoute from "./routes/instagramRoute.js"
+import clerkRoute from "./routes/clerkRoute.js"
 dotenv.config();
 
 const app = express();
@@ -22,6 +24,8 @@ app.get('/',(req,res)=>{
 
 app.use('/api/plan-route',contentRoute)
 
+app.use('/api/instagram',instagramRoute)
+app.use('/api/webhook',clerkRoute)
 // Only listen locally if not running on Vercel
 
   

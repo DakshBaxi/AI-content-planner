@@ -28,6 +28,25 @@ router.post('/generate-plan',
     const { platform, contentPillars, frequency, tone, goal,startDate,endDate } = req.body;
     const user = await getOrCreateUser(req.clerkId);
     const userId = user.id;
+        // Check if monthly reset is needed
+    const now = new Date();
+    const lastReset = new Date(user.lastReset);
+    const monthsSinceReset = (now.getFullYear() - lastReset.getFullYear()) * 12 + 
+                            (now.getMonth() - lastReset.getMonth());
+    
+    if (monthsSinceReset >= 1) {
+      // Reset monthly tokens
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          generationCount: 0,
+          lastReset: now
+        }
+      });
+      
+      user.generationCount = 0;
+      user.lastReset = now;
+    }
     if(user.generationCount>user.generationLimit){
       res.status(403).json("Limit reached. Upgrade to continue.");
     }
@@ -65,6 +84,26 @@ router.post('/generate-plan',
     const clerkId = req.clerkId
     let user = await prisma.user.findUnique({ where: { clerkId } });
     const { planId, instructions } = req.body;
+
+        // Check if monthly reset is needed
+    const now = new Date();
+    const lastReset = new Date(user.lastReset);
+    const monthsSinceReset = (now.getFullYear() - lastReset.getFullYear()) * 12 + 
+                            (now.getMonth() - lastReset.getMonth());
+    
+    if (monthsSinceReset >= 1) {
+      // Reset monthly tokens
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          generationCount: 0,
+          lastReset: now
+        }
+      });
+      
+      user.generationCount = 0;
+      user.lastReset = now;
+    }
 
     // const userId = user.id
     if(user.generationCount>user.generationLimit){
