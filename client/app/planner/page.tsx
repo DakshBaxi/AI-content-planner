@@ -8,7 +8,7 @@ import PlannerForm from "@/components/planner/planner-form"
 import ContentCalendar from "@/components/planner/content-calendar"
 import type { Plan } from "@/types/plan"
 import LoadingState from "@/components/planner/loading-state"
-import { createPlan, editPlan, fetchUserUsage } from "@/lib/api"
+import { createPlan, editPlan, fetchUserTier, fetchUserUsage } from "@/lib/api"
 import { toast } from "@/components/ui/use-toast"
 
 
@@ -19,6 +19,7 @@ export default function PlannerPage() {
   const [usage, setUsage] = useState<{ count: number; limit: number } | null>(null)
   const [usageLoading, setUsageLoading] = useState(true)
   const { isSignedIn } = useAuth()
+  const [proModel,setProModel]= useState(false);
 
   useEffect(() => {
     if (isSignedIn) {
@@ -30,6 +31,9 @@ export default function PlannerPage() {
     try {
       setUsageLoading(true)
       const data = await fetchUserUsage()
+      const proModel = await fetchUserTier();
+      // @ts-ignore
+      setProModel(proModel) 
       setUsage(data)
     } catch (error) {
       console.error("Failed to load usage data:", error)
@@ -157,7 +161,13 @@ export default function PlannerPage() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <PlannerForm onSubmit={handleSubmit} />
+              {
+                !usageLoading?(
+                  <LoadingState />
+                ):(
+                  <PlannerForm onSubmit={handleSubmit} proModel={proModel}/>
+                )
+              }
             </motion.div>
           )}
         </AnimatePresence>

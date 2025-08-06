@@ -19,26 +19,23 @@ model User {
   clerkId          String   @unique
   plans            Plan[]
   createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  
+  updatedAt        DateTime @default(now())
   // Generation/Token Management
   generationCount  Int      @default(0)
   generationLimit  Int      @default(5)
   lastReset        DateTime @default(now())
-  
   // Subscription Management
   subscriptionId   String?  // Clerk subscription ID
   subscriptionPlan String   @default("free") // "free", "pro", "premium"
   subscriptionStatus String @default("active") // "active", "canceled", "expired", "past_due"
   isSubscribed     Boolean  @default(false)
-  
   // Billing Information (optional)
   customerId       String?  // Stripe customer ID (if using Stripe)
   billingCycle     String?  // "monthly", "yearly"
   nextBillingDate  DateTime?
-  
   // Relations
   enterprise       Enterprise?
+  proModel         Boolean @default(false)
   
 }
 

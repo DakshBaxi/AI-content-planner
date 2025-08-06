@@ -6,7 +6,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 const apikey= process.env.GEMINI_API_KEY
 const genAI = new GoogleGenerativeAI(apikey);
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+const proModel = genAI.getGenerativeModel({ model: 'gemini-2.5-pro' });
+const flashModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 function buildPrompt(input, numberOfPosts) {
   return `
 You are a social media strategist.
@@ -38,7 +39,12 @@ async function generatePlan(input) {
   const numberOfWeeks = Math.ceil(daysDifference / 7);
   const numberOfPosts = input.frequency * numberOfWeeks;
   const prompt = buildPrompt(input, numberOfPosts);
-  const result = await model.generateContent(prompt);
+let result = {}
+if(input.model==="pro"){
+       result = await proModel.generateContent(prompt);
+}else{
+       result = await flashModel.generateContent(prompt);
+}
   const response = await result.response.text();
   try {
   const jsonMatch = response.match(/\[\s*{[\s\S]*?}\s*\]/);

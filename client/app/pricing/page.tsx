@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { submitEnterpriseForm } from "@/lib/api"
+import { PricingTable } from '@clerk/nextjs'
+
 
 const plans = [
   {
@@ -30,13 +32,13 @@ const plans = [
     features: [
       "5 content plans per month",
       "Basic AI suggestions",
-      "Single platform support",
+      // "Single platform support",
     ],
     cta: "Get Started",
     popular: false,
     icon: Zap,
   },
-  // {
+  // {  
   //   name: "Pro",
   //   price: "₹500",
   //   description: "Advanced features for content creators",
@@ -131,7 +133,9 @@ export default function PricingPage() {
           <h1 className="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">Choose Your Plan</h1>
           <p className="mt-4 text-xl text-muted-foreground">Select the perfect plan to power your content strategy</p>
         </motion.div>
-
+    <div>
+      {/* <PricingTable/> */}
+    </div>
         <div className="grid gap-8 md:grid-cols-2">
           {plans.map((plan, index) => (
             <motion.div

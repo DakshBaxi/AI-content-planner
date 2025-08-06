@@ -1,57 +1,79 @@
+
+
 "use client"
 
 import type React from "react"
-import { useRouter } from "next/navigation"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { X } from "lucide-react"
 import { useState } from "react"
-import { createPlan } from "@/lib/api"
 
-const formSchema = z.object({
-  platform: z.string({
-    required_error: "Please select a platform",
-  }),
-  contentPillars: z.array(z.string()).min(1, {
-    message: "Please add at least one content pillar",
-  }),
-  frequency: z.coerce.number().min(1).max(7),
-  tone: z.string({
-    required_error: "Please select a tone",
-  }),
-  goal: z.string().optional(),
-  startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-    message: "Please select a valid start date",
-  }),
-  endDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-    message: "Please select a valid end date",
+const formSchema = z
+  .object({
+    platform: z.string({
+      required_error: "Please select a platform",
+    }),
+    contentPillars: z.array(z.string()).min(1, {
+      message: "Please add at least one content pillar",
+    }),
+    frequency: z.coerce.number().min(1).max(7),
+    tone: z.string({
+      required_error: "Please select a tone",
+    }),
+    goal: z.string().optional(),
+    startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+      message: "Please select a valid start date",
+    }),
+    endDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+      message: "Please select a valid end date",
+    }),
+    model: z.enum(["free", "pro"], {
+      required_error: "Please select a plan",
+      invalid_type_error: "Plan must be either 'free' or 'pro'",
+    }),
   })
-}).refine(
-  (data) => {
-    const start = new Date(data.startDate)
-    const end = new Date(data.endDate)
-    const diffInDays = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
-    return diffInDays >= 0 && diffInDays <= 60
-  },
-  {
-    message: "End date must be within 60 days after the start date.",
-    path: ["endDate"],
-  }
-)
+  .refine(
+    (data) => {
+      const start = new Date(data.startDate)
+      const end = new Date(data.endDate)
+      const diffInDays =
+        (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+      return diffInDays >= 0 && diffInDays <= 60
+    },
+    {
+      message: "End date must be within 60 days after the start date.",
+      path: ["endDate"],
+    }
+  )
 
 type PlannerFormProps = {
   onSubmit: (values: z.infer<typeof formSchema>) => void
+  proModel:boolean
 }
 
-export default function PlannerForm({ onSubmit }: PlannerFormProps) {
+export default function PlannerForm({ onSubmit,proModel }: PlannerFormProps) {
   const [pillarInput, setPillarInput] = useState("")
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -62,8 +84,9 @@ export default function PlannerForm({ onSubmit }: PlannerFormProps) {
       frequency: 3,
       tone: "",
       goal: "",
-      startDate:"",
+      startDate: "",
       endDate: "",
+      model: "free",
     },
   })
 
@@ -81,7 +104,7 @@ export default function PlannerForm({ onSubmit }: PlannerFormProps) {
     const currentPillars = form.getValues("contentPillars")
     form.setValue(
       "contentPillars",
-      currentPillars.filter((p) => p !== pillar),
+      currentPillars.filter((p) => p !== pillar)
     )
   }
 
@@ -91,8 +114,6 @@ export default function PlannerForm({ onSubmit }: PlannerFormProps) {
       addPillar()
     }
   }
-
-
 
   return (
     <motion.div
@@ -109,7 +130,10 @@ export default function PlannerForm({ onSubmit }: PlannerFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Platform</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a platform" />
@@ -122,7 +146,9 @@ export default function PlannerForm({ onSubmit }: PlannerFormProps) {
                     <SelectItem value="facebook">Facebook</SelectItem>
                   </SelectContent>
                 </Select>
-                <FormDescription>Choose the platform where you want to publish your content.</FormDescription>
+                <FormDescription>
+                  Choose the platform where you want to publish your content.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -136,7 +162,11 @@ export default function PlannerForm({ onSubmit }: PlannerFormProps) {
                 <FormLabel>Content Pillars</FormLabel>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {field.value.map((pillar) => (
-                    <Badge key={pillar} variant="secondary" className="text-sm py-1 px-2">
+                    <Badge
+                      key={pillar}
+                      variant="secondary"
+                      className="text-sm py-1 px-2"
+                    >
                       {pillar}
                       <Button
                         type="button"
@@ -164,7 +194,9 @@ export default function PlannerForm({ onSubmit }: PlannerFormProps) {
                     Add
                   </Button>
                 </div>
-                <FormDescription>Add topics or themes that your content will focus on.</FormDescription>
+                <FormDescription>
+                  Add topics or themes that your content will focus on.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -179,7 +211,9 @@ export default function PlannerForm({ onSubmit }: PlannerFormProps) {
                 <FormControl>
                   <Input type="number" min={1} max={7} {...field} />
                 </FormControl>
-                <FormDescription>How many posts per week do you want to publish?</FormDescription>
+                <FormDescription>
+                  How many posts per week do you want to publish?
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -191,7 +225,10 @@ export default function PlannerForm({ onSubmit }: PlannerFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Tone</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a tone" />
@@ -206,7 +243,9 @@ export default function PlannerForm({ onSubmit }: PlannerFormProps) {
                     <SelectItem value="inspirational">Inspirational</SelectItem>
                   </SelectContent>
                 </Select>
-                <FormDescription>Choose the tone of voice for your content.</FormDescription>
+                <FormDescription>
+                  Choose the tone of voice for your content.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -219,46 +258,88 @@ export default function PlannerForm({ onSubmit }: PlannerFormProps) {
               <FormItem>
                 <FormLabel>Goal (Optional)</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="What do you want to achieve with this content plan?" {...field} />
+                  <Textarea
+                    placeholder="What do you want to achieve with this content plan?"
+                    {...field}
+                  />
                 </FormControl>
                 <FormDescription>
-                  Describe your content marketing goals to help the AI generate more relevant suggestions.
+                  Describe your content marketing goals to help the AI generate
+                  more relevant suggestions.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-        <div className="flex gap-4">
-        <FormField
-            control={form.control}
-            name="startDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Start Date</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormDescription>Choose the start date for your content planning.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
+          <div className="flex gap-4">
+            <FormField
+              control={form.control}
+              name="startDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Start Date</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Choose the start date for your content planning.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="endDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>End Date</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Choose the end date for your content planning.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* PLAN SELECTION (toggle style) */}
           <FormField
             control={form.control}
-            name="endDate"
+            name="model"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>End Date</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormDescription>Choose the end date for your content planning.</FormDescription>
+                <FormLabel>Plan</FormLabel>
+                <div className="flex gap-4">
+                  <Button
+                    type="button"
+                    variant={field.value === "free" ? "default" : "outline"}
+                    onClick={() => field.onChange("free")}
+                  >
+                    Free
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={field.value === "pro" ? "default" : "outline"}
+                    onClick={() => field.onChange("pro")}
+                    disabled={!proModel}
+                  >
+                    Pro
+                  </Button>
+                </div>
+                <FormDescription>
+                  Free includes basic features. Pro unlocks advanced content
+                  generation.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-        </div>
 
           <Button type="submit" className="w-full">
             Generate Content Plan

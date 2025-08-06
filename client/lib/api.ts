@@ -3,6 +3,7 @@
 "use server"
 import type { Plan, PlanSummary, Post } from "@/types/plan"
 import { auth } from "@clerk/nextjs/server"
+import axios from "axios"
 
 const API_BASE_URL =process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
@@ -109,28 +110,25 @@ export async function editPost(postId: string, update: {
 }
 
 export async function fetchUserUsage(): Promise<{ count: number; limit: number }> {
-  // For demo purposes, return mock data
-  // In a real app, you would make an actual API call:
-  // const response = await fetch(`${API_BASE_URL}/user/usage`, {
-  //   headers: getAuthHeaders(),
-  // })
-  // return handleResponse(response)
-
-  // Mock data for demonstration
-
   const headers = await getAuthHeaders()
   const response = await fetch(`${API_BASE_URL}/api/plan-route/user/usage`, {
     method: "GET",
     headers,
   })
+ 
   return handleResponse(response)
+  
+}
 
-  // await new Promise((resolve) => setTimeout(resolve, 500))
-
-  // return {
-  //   count: 3,
-  //   limit: 5,
-  // }
+export async function fetchUserTier() {
+  const headers = await getAuthHeaders()
+  const response = await axios.get(`${API_BASE_URL}/api/plan-route/user/model`, {
+    headers
+  })
+  // console.log(response.data);
+  return response.data.proModel;
+  
+  // return handleResponse(response)
 }
 
 // /lib/api.ts

@@ -25,7 +25,7 @@ async function getOrCreateUser(clerkId) {
 router.post('/generate-plan', 
   authMiddleware,
   async (req, res) => {
-    const { platform, contentPillars, frequency, tone, goal,startDate,endDate } = req.body;
+    const { platform, contentPillars, frequency, tone, goal,startDate,endDate,model } = req.body;
     const user = await getOrCreateUser(req.clerkId);
     const userId = user.id;
         // Check if monthly reset is needed
@@ -50,7 +50,7 @@ router.post('/generate-plan',
     if(user.generationCount>user.generationLimit){
       res.status(403).json("Limit reached. Upgrade to continue.");
     }
-    const rawPosts = await generatePlan({ platform, contentPillars, frequency, tone, goal,startDate,endDate });
+    const rawPosts = await generatePlan({ platform, contentPillars, frequency, tone, goal,startDate,endDate,model });
   
     const plan = await prisma.plan.create({
       data: {
@@ -320,6 +320,21 @@ router.get("/user/usage", authMiddleware,async (req, res) => {
     res.status(500).json({ error: "Failed to fetch usage" })
   }
 })
+router.get("/user/model", authMiddleware,async (req, res) => {
+  try {
+    const clerkId = req.clerkId
+    let user = await prisma.user.findUnique({ where: { clerkId } });
+
+    if (!user) return res.status(400).json({ error: "Missing user " })
+    return res.json({
+      proModel: user.proModel,
+    })
+  } catch (err) {
+    console.error("Fetch usage error:", err)
+    res.status(500).json({ error: "Failed to fetch usage" })
+  }
+})
+
 
 
 router.post('/submitEnterpriseForm',authMiddleware, async (req, res) => {
