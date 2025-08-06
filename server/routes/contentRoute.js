@@ -26,7 +26,13 @@ router.post('/generate-plan',
   authMiddleware,
   async (req, res) => {
     const { platform, contentPillars, frequency, tone, goal,startDate,endDate,model } = req.body;
+    
     const user = await getOrCreateUser(req.clerkId);
+    if(!user.proModel&&model==="pro"){
+      return res.status(414).json({
+        message:"You dont have pro subscription"
+      })
+    }
     const userId = user.id;
         // Check if monthly reset is needed
     const now = new Date();

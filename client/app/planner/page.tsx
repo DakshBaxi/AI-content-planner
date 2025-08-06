@@ -161,13 +161,11 @@ export default function PlannerPage() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              {
-                !usageLoading?(
-                  <LoadingState />
-                ):(
+              
+               
                   <PlannerForm onSubmit={handleSubmit} proModel={proModel}/>
-                )
-              }
+                
+              
             </motion.div>
           )}
         </AnimatePresence>
