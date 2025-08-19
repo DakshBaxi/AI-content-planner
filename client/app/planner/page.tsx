@@ -70,8 +70,8 @@ export default function PlannerPage() {
       const newPlan = await createPlan(formData)
       
 
-      // Simulate API call with timeout
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      // // Simulate API call with timeout
+      // await new Promise((resolve) => setTimeout(resolve, 2000))
 
       setPlan(newPlan)
       if (usage) {

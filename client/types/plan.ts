@@ -14,6 +14,7 @@ export type Plan = {
   tone: string
   goal?: string
   posts: Post[]
+  model ?: string
 }
 
 export type PlanSummary = {

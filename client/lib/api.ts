@@ -5,8 +5,8 @@ import type { Plan, PlanSummary, Post } from "@/types/plan"
 import { auth } from "@clerk/nextjs/server"
 import axios from "axios"
 
-const API_BASE_URL =process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-
+const API_BASE_URL =process.env.NEXT_PUBLIC_API_URL
+console.log("API_BASE_URL", API_BASE_URL)
 async function getAuthHeaders() {
   const { getToken } = await auth()
   const token = await getToken()
@@ -19,9 +19,13 @@ async function getAuthHeaders() {
 
 async function handleResponse(response: Response) {
   if (!response.ok) {
-    const error = await response.json().catch(() => ({}))
-    console.log(error)
-    throw new Error(error.message || "An error occurred while fetching data")
+    // const error = await response.json().catch((error) => ({
+    //   message: "An error occurred while processing your request",
+    //   details: error.message || "Unknown error",
+    // }))
+    // console.log(error)
+    // throw new Error(error.message || "An error occurred while fetching data")
+    console.log("Error response:", response)
   }
   return response.json()
 }
