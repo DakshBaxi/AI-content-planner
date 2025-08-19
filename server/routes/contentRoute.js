@@ -25,7 +25,7 @@ async function getOrCreateUser(clerkId) {
 router.post('/generate-plan', 
   authMiddleware,
   async (req, res) => {
-    const { platform, contentPillars, frequency, tone, goal,startDate,endDate,model } = req.body;
+    const { platform, contentPillars, frequency, tone, goal,startDate,endDate, model } = req.body;
     
     const user = await getOrCreateUser(req.clerkId);
     if(!user.proModel&&model==="pro"){
